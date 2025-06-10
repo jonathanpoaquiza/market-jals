@@ -46,6 +46,7 @@ export default function ProductsPage() {
         throw new Error(data.message || 'Error al eliminar el producto');
       }
 
+      // Eliminar del estado local
       setProducts(prev => prev.filter(p => p.id !== productId));
     } catch (err: any) {
       alert('Error: ' + err.message);
@@ -57,7 +58,7 @@ export default function ProductsPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Gestión de Productos</h1>
+      <h1 className="text-2xl font-bold mb-6">Productos</h1>
       <Link href="/products/new" className="mb-4 inline-block text-blue-600 underline">
         Crear nuevo producto
       </Link>

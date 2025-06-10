@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { addToCart, getCart } from '@/lib/cart';
+import { useAuth } from '@/lib/auth/auth-context';
+import { useRouter } from 'next/navigation';
 
 interface Product {
   id: string;
