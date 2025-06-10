@@ -247,13 +247,13 @@ export default function CreateProductPage() {
                 onChange={handleChange}
                 required
                 placeholder="Nombre del producto"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800"
               />
             </div>
 
             {/* Categoría - Ahora es input text */}
             <div>
-              <label htmlFor="category" className="block text-sm font-semibold mb-2 text-slate-700">
+              <label htmlFor="category" className="block text-sm font-semibold mb-2 text-slate-800">
                 Categoría
               </label>
               <input
@@ -264,13 +264,13 @@ export default function CreateProductPage() {
                 onChange={handleChange}
                 required
                 placeholder="Categoría del producto"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800"
               />
             </div>
 
             {/* Precio */}
             <div>
-              <label htmlFor="price" className="block text-sm font-semibold mb-2 text-slate-700">
+              <label htmlFor="price" className="block text-sm font-semibold mb-2 text-slate-800">
                 Precio
               </label>
               <input
@@ -283,13 +283,13 @@ export default function CreateProductPage() {
                 onChange={handleChange}
                 required
                 placeholder="0.00"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800"
               />
             </div>
 
             {/* Stock */}
             <div>
-              <label htmlFor="stock" className="block text-sm font-semibold mb-2 text-slate-700">
+              <label htmlFor="stock" className="block text-sm font-semibold mb-2 text-slate-800">
                 Stock
               </label>
               <input
@@ -301,7 +301,7 @@ export default function CreateProductPage() {
                 onChange={handleChange}
                 required
                 placeholder="Cantidad disponible"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800"
               />
             </div>
 
@@ -334,7 +334,7 @@ export default function CreateProductPage() {
                 rows={4}
                 required
                 placeholder="Descripción del producto"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800"
               />
             </div>
           </div>
