@@ -3,14 +3,7 @@ import { storage } from '@/lib/firebase/client'; // Importa la instancia de stor
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid'; // Para generar IDs únicos para los archivos
 
-// Puedes instalar uuid si no lo tienes: npm install uuid @types/uuid
 
-/**
- * Sube un archivo a Firebase Storage y devuelve su URL de descarga.
- * @param file El archivo a subir (File object).
- * @param path La ruta dentro de Storage (ej. 'product-images/', 'user-avatars/').
- * @returns La URL de descarga del archivo.
- */
 export const uploadFileToFirebaseStorage = async (
   file: File,
   path: string,
