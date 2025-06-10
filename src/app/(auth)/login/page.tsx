@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAuth } from '@/lib/auth/auth-context';
 import { useRouter } from 'next/navigation';
+import { UserRole } from '@/types/auth';
 
 const schema = yup.object().shape({
   email: yup
@@ -17,7 +18,17 @@ const schema = yup.object().shape({
     .string()
     .min(6, 'La contraseña debe tener al menos 6 caracteres')
     .required('La contraseña es obligatoria'),
+  role: yup
+    .string()
+    .oneOf(['client', 'employee', 'admin'], 'Selecciona un tipo de usuario válido')
+    .required('Selecciona tu tipo de usuario'),
 });
+
+interface LoginFormData {
+  email: string;
+  password: string;
+  role: UserRole;
+}
 
 export default function LoginPage() {
   const { login, loading } = useAuth();
@@ -28,27 +39,83 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<LoginFormData>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      role: 'client' // Valor por defecto
+    }
   });
 
-  const onSubmit = async (data: any) => {
-    setError(null);
+  const onSubmit = async (data: LoginFormData) => {
+    // console.log('🔥 Form submitted with data:', data); // Eliminado para limpiar consola
+    setError(null); // Limpia cualquier error previo
+
     try {
-      await login(data.email, data.password);
-      router.push('/dashboard');
-    } catch (err: any) {
-      let errorMessage = 'Error al iniciar sesión. Inténtalo de nuevo.';
-      if (err.code === 'auth/user-not-found') {
-        errorMessage = 'Usuario no encontrado. Verifica tu email.';
-      } else if (err.code === 'auth/wrong-password') {
-        errorMessage = 'Contraseña incorrecta.';
-      } else if (err.code === 'auth/invalid-email') {
-        errorMessage = 'El formato del email es inválido.';
+      // console.log('🔄 Attempting login with role validation...'); // Eliminado para limpiar consola
+      await login(data.email, data.password, data.role);
+      // console.log('✅ Login successful'); // Eliminado para limpiar consola
+
+      // Redireccionar según el rol
+      switch (data.role) {
+        case 'admin':
+          router.push('/dashboard');
+          break;
+        case 'employee':
+          router.push('/dashboard');
+          break;
+        case 'client':
+        default:
+          router.push('/dashboard');
+          break;
       }
+    } catch (err: any) { // Este es el único bloque catch necesario
+      let errorMessage = 'Error al iniciar sesión. Verifica tus credenciales.';
+
+      if (err?.message && err.message.includes('No tienes permisos')) {
+        errorMessage = err.message;
+      } else if (err?.message && err.message.includes('Perfil de usuario no encontrado')) {
+        errorMessage = 'Tu cuenta no tiene un perfil válido. Contacta al administrador.';
+      } else if (err?.code) {
+        switch (err.code) {
+          case 'auth/user-not-found':
+          case 'auth/wrong-password':
+          case 'auth/invalid-credential':
+          case 'auth/invalid-login-credentials':
+          case 'auth/user-disabled':
+            errorMessage = 'Credenciales inválidas. Verifica tu email y contraseña.';
+            break;
+          case 'auth/invalid-email':
+            errorMessage = 'El formato del email es inválido.';
+            break;
+          case 'auth/too-many-requests':
+            errorMessage = 'Demasiados intentos fallidos. Intenta más tarde.';
+            break;
+          case 'auth/network-request-failed':
+            errorMessage = 'Error de conexión. Verifica tu internet.';
+            break;
+          default:
+            errorMessage = `Error de autenticación: ${err.code}`;
+        }
+      } else if (err?.message) {
+        if (err.message.includes('invalid') ||
+            err.message.includes('wrong') ||
+            err.message.includes('not found')) {
+          errorMessage = 'Credenciales inválidas. Verifica tu email y contraseña.';
+        } else {
+          errorMessage = `Error: ${err.message}`;
+        }
+      }
+
+      // console.log('🔴 Setting error message:', errorMessage); // Eliminado para limpiar consola
       setError(errorMessage);
     }
   };
+
+  const roleOptions = [
+    { value: 'client', label: 'Cliente', description: 'Acceso básico para clientes' },
+    { value: 'employee', label: 'Empleado', description: 'Acceso para personal de la empresa' },
+    { value: 'admin', label: 'Administrador', description: 'Acceso completo al sistema' }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
@@ -77,7 +144,7 @@ export default function LoginPage() {
         </div>
 
         {error && (
-          <div className="rounded-md bg-red-50 p-4">
+          <div className="rounded-md bg-red-50 p-4 border border-red-200">
             <div className="flex">
               <div className="flex-shrink-0">
                 <svg
@@ -102,6 +169,29 @@ export default function LoginPage() {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm space-y-4">
+            {/* Selección de tipo de usuario */}
+            <div>
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+                Tipo de Usuario
+              </label>
+              <select
+                id="role"
+                {...register('role')}
+                className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm bg-white"
+              >
+                {roleOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label} - {option.description}
+                  </option>
+                ))}
+              </select>
+              {errors.role && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.role.message}
+                </p>
+              )}
+            </div>
+
             <div>
               <label htmlFor="email" className="sr-only">
                 Email
@@ -110,7 +200,6 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 autoComplete="email"
-                required
                 {...register('email')}
                 className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Correo electrónico"
@@ -129,7 +218,6 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 autoComplete="current-password"
-                required
                 {...register('password')}
                 className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Contraseña"
@@ -143,7 +231,6 @@ export default function LoginPage() {
           </div>
 
           <div className="flex items-center justify-between">
-            
             <div className="text-sm">
               <Link
                 href="/reset-password"
@@ -158,7 +245,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50"
             >
               {loading ? (
                 <>

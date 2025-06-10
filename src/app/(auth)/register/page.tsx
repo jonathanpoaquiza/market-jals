@@ -10,19 +10,12 @@ import { useRouter } from 'next/navigation';
 
 const schema = yup.object().shape({
   displayName: yup.string().required('El nombre es obligatorio'),
-  email: yup
-    .string()
-    .email('Email inválido')
-    .required('El email es obligatorio'),
-  password: yup
-    .string()
-    .min(6, 'La contraseña debe tener al menos 6 caracteres')
-    .required('La contraseña es obligatoria'),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref('password')], 'Las contraseñas no coinciden')
-    .required('Confirma tu contraseña'),
+  email: yup.string().email('Email inválido').required('El email es obligatorio'),
+  password: yup.string().min(6, 'La contraseña debe tener al menos 6 caracteres').required('La contraseña es obligatoria'),
+  confirmPassword: yup.string().oneOf([yup.ref('password')], 'Las contraseñas no coinciden').required('Confirma tu contraseña'),
+  role: yup.string().oneOf(['client', 'employee', 'admin'], 'Rol inválido').required('Selecciona un rol'),
 });
+
 
 export default function RegisterPage() {
   const { register: authRegister, loading } = useAuth();
@@ -37,23 +30,23 @@ export default function RegisterPage() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data: any) => {
-    setError(null);
-    try {
-      await authRegister(data.email, data.password, data.displayName);
-      router.push('/dashboard');
-    } catch (err: any) {
-      let errorMessage = 'Error al registrar. Inténtalo de nuevo.';
-      if (err.code === 'auth/email-already-in-use') {
-        errorMessage = 'Este email ya está registrado.';
-      } else if (err.code === 'auth/invalid-email') {
-        errorMessage = 'El formato del email es inválido.';
-      } else if (err.code === 'auth/weak-password') {
-        errorMessage = 'La contraseña es demasiado débil.';
-      }
-      setError(errorMessage);
+const onSubmit = async (data: any) => {
+  setError(null);
+  try {
+    await authRegister(data.email, data.password, data.displayName, data.role); // 👈 Incluye 'data.role'
+    router.push('/dashboard');
+  } catch (err: any) {
+    let errorMessage = 'Error al registrar. Inténtalo de nuevo.';
+    if (err.code === 'auth/email-already-in-use') {
+      errorMessage = 'Este email ya está registrado.';
+    } else if (err.code === 'auth/invalid-email') {
+      errorMessage = 'El formato del email es inválido.';
+    } else if (err.code === 'auth/weak-password') {
+      errorMessage = 'La contraseña es demasiado débil.';
     }
-  };
+    setError(errorMessage);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
@@ -183,6 +176,28 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
+          </div>
+
+          <div>
+            <label htmlFor="role" className="sr-only">
+              Rol
+            </label>
+            <select
+              id="role"
+              {...register('role')}
+              className="appearance-none relative block w-full px-3 py-3 border border-gray-300 bg-white text-gray-900 rounded-lg focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              defaultValue=""
+            >
+              <option value="" disabled>Selecciona un rol</option>
+              <option value="client">Cliente</option>
+              <option value="employee">Empleado</option>
+              <option value="admin">Administrador</option>
+            </select>
+            {errors.role && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.role.message}
+              </p>
+            )}
           </div>
 
           <div>
