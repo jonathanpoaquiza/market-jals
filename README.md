@@ -1,4 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Market Jals - Plataforma de Comercio Electrónico
+
+Este es un proyecto de comercio electrónico desarrollado con Next.js, TypeScript y Tailwind CSS.
+
+## Características Implementadas
+
+- 🛍️ Catálogo de productos con búsqueda y filtrado
+- 🔐 Autenticación de usuarios
+- 🛒 Carrito de compras
+- 💳 Proceso de pago seguro
+- 📱 Diseño responsive
+- 🔍 Búsqueda en tiempo real
+- ⭐ Sistema de valoraciones
+
+## Tecnologías Utilizadas
+
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- Firebase (Autenticación y Base de datos)
+- Stripe (Procesamiento de pagos)
+
+## Instalación
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/tu-usuario/market-jals.git
+
+# Instalar dependencias
+npm install
+
+# Configurar variables de entorno
+cp .env.example .env.local
+
+# Iniciar el servidor de desarrollo
+npm run dev
+```
+
+## Estructura del Proyecto
+
+```
+src/
+  ├── app/          # Rutas y páginas de la aplicación
+  ├── components/   # Componentes reutilizables
+  ├── lib/         # Utilidades y configuraciones
+  ├── hooks/       # Custom hooks
+  └── types/       # Definiciones de TypeScript
+```
+
+## Contribuciones
+
+Las contribuciones son bienvenidas. Por favor, lee [CONTRIBUTING.md](CONTRIBUTING.md) para detalles sobre nuestro código de conducta y el proceso para enviarnos pull requests.
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para más detalles.
 
 ## Getting Started
 
