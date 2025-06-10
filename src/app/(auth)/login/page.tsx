@@ -106,7 +106,6 @@ export default function LoginPage() {
         }
       }
 
-      // console.log('🔴 Setting error message:', errorMessage); // Eliminado para limpiar consola
       setError(errorMessage);
     }
   };

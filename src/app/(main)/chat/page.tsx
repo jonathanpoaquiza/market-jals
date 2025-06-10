@@ -15,9 +15,7 @@ import {
   query,
   orderBy,
   limit,
-  onSnapshot, // Importar la función para escuchar en tiempo real
-  // addDoc, // No lo usaremos directamente aquí para escribir, lo haremos vía API POST
-  // serverTimestamp // No lo usaremos directamente aquí
+  onSnapshot
 } from 'firebase/firestore';
 
 export default function ChatPage() {
