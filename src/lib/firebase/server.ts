@@ -14,6 +14,9 @@ if (!serviceAccountString) {
 let serviceAccount: any;
 try {
   serviceAccount = JSON.parse(serviceAccountString);
+
+  // Desescapar los saltos de línea para que sea válido PEM
+  serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
 } catch (e) {
   console.error("Error parsing FIREBASE_SERVICE_ACCOUNT_KEY:", e);
   throw new Error("Invalid FIREBASE_SERVICE_ACCOUNT_KEY format. Must be a valid JSON string.");

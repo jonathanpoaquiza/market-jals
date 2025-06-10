@@ -37,7 +37,7 @@ export const verifyIdTokenAndGetUser = async (
     const userDocRef = adminDb.collection('users').doc(uid);
     const userDocSnap = await userDocRef.get();
 
-    let role: UserRole = 'client'; // Rol por defecto
+    let role: UserRole = 'admin'; // Rol por defecto
 
     if (!userDocSnap.exists) {
       console.log('⚠️ Perfil de usuario no encontrado en Firestore, creando uno nuevo...');
@@ -47,7 +47,7 @@ export const verifyIdTokenAndGetUser = async (
         uid: uid,
         email: decodedToken.email || '',
         displayName: decodedToken.name || decodedToken.email || 'Usuario',
-        role: 'client',
+        role: role,
         createdAt: new Date(),
       };
 
@@ -61,9 +61,10 @@ export const verifyIdTokenAndGetUser = async (
         console.log('⚠️ Continuando con rol por defecto');
       }
     } else {
-      console.log('✅ Perfil de usuario encontrado en Firestore');
       const userData = userDocSnap.data();
-      role = userData?.role || 'client';
+      
+      console.log('✅ Perfil de usuario encontrado en Firestore',userData);
+      role = userData?.role || role;
     }
 
     const authenticatedUser: AuthenticatedUser = {
@@ -95,7 +96,7 @@ export const verifyIdTokenAndGetUser = async (
 /**
  * Verifica si el usuario autenticado tiene un rol específico o superior.
  * @param user El objeto AuthenticatedUser.
- * @param requiredRole El rol mínimo requerido ('client', 'employee', 'admin').
+ * @param requiredRole El rol mínimo requerido (role, 'employee', 'admin').
  * @returns true si el usuario tiene el rol requerido o superior, false en caso contrario.
  */
 export const checkUserRole = (

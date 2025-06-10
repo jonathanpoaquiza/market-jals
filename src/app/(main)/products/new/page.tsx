@@ -2,11 +2,20 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { getAuth } from 'firebase/auth';
+
+export async function getAuthToken(): Promise<string | null> {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  if (!user) return null;
+  return await user.getIdToken();
+}
 
 export default function NewProductPage() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [description, setDescription] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -28,10 +37,18 @@ export default function NewProductPage() {
     setLoading(true);
 
     try {
+      const token = await getAuthToken();
+      if (!token) {
+        throw new Error('No se pudo autenticar al usuario.');
+      }
+
       const res = await fetch('/api/products', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, price: priceNumber }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ name, price: priceNumber, description }),
       });
 
       if (!res.ok) {
@@ -68,6 +85,14 @@ export default function NewProductPage() {
           disabled={loading}
           min="0"
           step="0.01"
+        />
+        <textarea
+          placeholder="Descripción"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="border p-2 rounded"
+          rows={4}
+          disabled={loading}
         />
         {error && <p className="text-red-600">{error}</p>}
         <button
